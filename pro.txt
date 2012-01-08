@@ -1,0 +1,122 @@
+                           Flower-Lighter
+
+
+The program is a firmware of an avr microcontroller. A device with
+this microcontoller makes extra-lighting of a room.
+
+The device has a usual human clock. It is used to notice the start and
+duration of lighting.
+
+Main algorithm of the program is a periodical procedure. It is also
+trigged by timer. The procedure runs from the start of extra-lighting
+time and durates until extra-lighting time is exhausted. The procedure
+checks lighting level. If the level is okay then the procedure exits.
+
+All periodical actions of the program run by a timer interrupt. A
+handler of the timer interrupt consequently calls all periodical
+procedures. By default interrupt handler is uninterruptable. The first
+periodical procedure to be called is a clock one. After exit from it
+interrupts are enabled. Rest procedures also don't support
+interruptable processing but they can run too long and the clock
+procedure should be called after each a timer interrupt. Rest
+procedures are ignored if previous interrupt handler hasn't finished
+yet.
+
+The device has got several levels of lamplight intensity. Zero level
+is when all lamps are switched off. First level is when minimalist
+subset of lamps are switched on and so on. Last level is when all
+lamps are switched on.
+
+A lamp has got limited resource of switching cycles and it isn't
+big. So the program should care about frequent switching lamps. A
+situation of continuous switching on and off when lamplighting leven N
+gives scanty resulting lighting level but the level N+1 leads to
+redundant intensity should be prevented.
+
+The program must keep a track of lighting intensity for each power
+level. Calculated values are changed by a delta which is got after
+each iteration of the main periodic procedure for current
+level. I.e. there is a suggestion lighting intensity is linear.
+
+The procedure picks minimal power level which provide a reasonable
+level of the total lighting intensity.
+
+A minimal period of time between changing of levels is constrained
+some invariant. Let's say it's 5 minutes. This constraint doesn't work
+if user changes parameters of the lighting program.
+
+If the device cannot provide the reasonable lighting intensity
+(external power isn't or overall power of lamps is insufficient) then
+the program increases temporary extra-lighting period by adding
+penalty minutes. If summary of penalty minutes is more the end of a
+day then overflow part goes to the next day. A plant also needs a
+minimal dark period of day. Also it must be accounted.
+
+The program state shouldn't depend from an external power
+supply. Because the device has got a standby battery. It must not be
+used when external power is available. This battery is used to save
+the state and to wait the emerge of external power. The device in the
+normal work mode spends much more energy for electronic
+relays. Waiting mode requires much less energy. The program should be
+aware about state of external power.
+
+A user interface of the device has a power swtich, 2 buttons (menu and
+action), a 2-digit numeric display and few led lamps (power, period,
+lighting).
+
+Buttons are only used to configure the device. Because the device acts
+absolutely automatically. Menu button flips a cycle list of
+configuration parameters. The numeric display shows a value of one
+parameter at time. By default number hours of current time is shown.
+
+Just after a click by the menu button the display shows an
+abbreviation of a current parameter during 5 seconds. A parameter
+value will be displayed after 5 second from changing current
+parameter. To see the value early a user should press the action
+button. All following clicks of the action button changes a parameter
+value.
+
+Menu items:
+  Abbreviation   Description                 Range       Measure       Action
+  HO             Hours of current time       0-23        Hours         +1
+  nI             Minutes of current time     0-59        Minutes       +1
+  SE             Seconds of current time     0-59        Seconds       +1
+  HS             Hours of start lighting     0-23        Hours         +1
+  nS             Minutes of start lighting   0-59        Minutes       +1
+  dL             Duration of lighting        1-20        Hours         +1
+  dd             Minimum duration of night   1-20        Hours         +1
+  pH             Hours of total penalty      0-99        Hours         Reset
+  pI             Minutes of total penalty    0-59        Minutes       Reset
+  IL             Minimum level of total      0-99        %             +1
+                    light intensity  
+  CI             Current level of total
+                    light intensity          0-99        %             -
+  LL             Lighting level              Au          (auto)
+                                             0           Off
+                                             1           1 lamp
+                                             2           2 lamps
+                                             3           3 lamps
+  ud             days of uptime              0-99        Days          -
+  uH             hours of uptime             0-23        Hours         -
+  uI             minutes of uptime           0-59        Minutes       -
+  uS             seconds of uptime           0-59        Seconds       -
+
+
+Led lamps:
+  Power led:
+        Behaviour   Description
+        on          The external power supply is used.
+        blink       The battery is used. external supply is unavailable.
+                    Other leds and the display is off.
+        off         The device does not work.
+  Period led:
+        Behaviour   Description
+        on          A light period of a day.
+        blink       Penalty.
+        off         A dark period of a day.
+  Lighting led
+        on          Extra-lighting runs.
+        blink       Extra-lighting is insufficient.
+        off         Extra-lighting is not active.
+
+       
