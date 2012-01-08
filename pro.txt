@@ -96,10 +96,11 @@ Menu items:
                                              1           1 lamp
                                              2           2 lamps
                                              3           3 lamps
-  ud             days of uptime              0-99        Days          -
-  uH             hours of uptime             0-23        Hours         -
-  uI             minutes of uptime           0-59        Minutes       -
-  uS             seconds of uptime           0-59        Seconds       -
+  nd             Number switches per day     0-99                      Reset
+  ud             Days of uptime              0-99        Days          -
+  uH             Hours of uptime             0-23        Hours         -
+  uI             Minutes of uptime           0-59        Minutes       -
+  uS             Seconds of uptime           0-59        Seconds       -
 
 
 Led lamps:
