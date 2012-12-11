@@ -1,4 +1,6 @@
 #include "counter.h"
+#include "action.h"
+#include <QBuffer>
 
 Counter::Counter(unsigned int limit)
     : m_val(0), m_limit(limit)

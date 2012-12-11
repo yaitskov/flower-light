@@ -1,6 +1,9 @@
 #ifndef COUNTER_H
 #define COUNTER_H
 #include "stdconf.h"
+#include "action.h"
+#include "action.h"
+
 /**
   * periodic events
   */
